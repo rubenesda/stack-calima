@@ -1,0 +1,14 @@
+# NodeJS packages
+*/**/node_modules
+
+# Typescript transpilation
+*/**/build
+*/**/dist
+
+# Other macOS files
+.DS_Store
+*/**/.cache
+*/**/public/build
+*/**/.mf
+*/**.env.*
+*/**.shopify
