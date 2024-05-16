@@ -5,6 +5,9 @@
 */**/build
 */**/dist
 
+# GraphQL codegen
+*/**/__generated__
+
 # Other macOS files
 .DS_Store
 */**/.cache
