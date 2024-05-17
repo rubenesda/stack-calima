@@ -6,7 +6,7 @@ module.exports = {
     '@typescript-eslint',
     '@stylistic',
   ],
-  ignorePatterns: ['src/**/types.ts'],
+  ignorePatterns: ['src/**/types.ts', '**/jest.*.js'],
   root: true,
   rules: {
     '@stylistic/quotes': ['error', 'single'],

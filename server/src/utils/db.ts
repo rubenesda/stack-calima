@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
+import 'dotenv/config';
 
-const dbUrl = 'mongodb://localhost:27017/micro_data';
+const dbUrl = process.env.DB_URL;
 
 export const dbConnection = () => {
   try {
@@ -13,8 +14,12 @@ export const dbConnection = () => {
   }
 };
 
-export const dbDisconnect = () => {
+export const dbDisconnect = async () => {
   try {
+    const collections = await mongoose.connection.db.collections();
+    for (const collection of collections) {
+      await collection.drop();
+    }
     mongoose.disconnect();
   } catch(err) {
     console.log('Could not disconnect to the database', err);
