@@ -10,12 +10,18 @@ export const typeDefs = gql`
     "Delete a specfiic favorite product"
     deleteFavorite(id: ID!): Boolean
     "Update a specific favorite product"
-    updateFavorite(id: ID!): Favorite!
+    createFavorite(createFavoriteInput: createFavoriteInput!): Favorite!
   }
 
   "Favorite is an element that link a product store item as favorite"
   type Favorite {
     id: ID!
+    "The Product's ID"
+    productId: String!
+  }
+
+  "Favorite's data that will be stored"
+  input createFavoriteInput {
     "The Product's ID"
     productId: String!
   }

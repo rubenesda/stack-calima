@@ -1,28 +1,27 @@
-import { addMocksToSchema } from "@graphql-tools/mock";
-import { makeExecutableSchema } from "@graphql-tools/schema";
-import { ApolloServer } from "@apollo/server";
-import { startStandaloneServer } from "@apollo/server/standalone";
+import { ApolloServer } from '@apollo/server';
+import { startStandaloneServer } from '@apollo/server/standalone';
 import { typeDefs } from './schema';
+import { resolvers } from './resolvers';
+import { dbConnection } from './utils/db';
+import { FavoriteDataSource } from './datasources/favorite-db';
 
 async function startApolloServer () {
-  const mocks = {
-    Query: () => ({
-      favorites: () => [...new Array(15)],
-    }),
-    Favorite: () => ({
-      id: () => 'f_01',
-      productId: () => 'gid://shopify/Product/7982853619734'
-    }),
-  };
+  await dbConnection();
 
   const server = new ApolloServer({
-    schema: addMocksToSchema({
-      schema: makeExecutableSchema({ typeDefs }),
-      mocks
-    }),
+    resolvers,
+    typeDefs,
   });
 
-  const { url } = await startStandaloneServer(server);
+  const { url } = await startStandaloneServer(server, {
+    context: async () => {
+      return {
+        dataSources: {
+          favoritesDB: new FavoriteDataSource(),
+        },
+      };
+    },
+  });
   console.log(`
     🚀  Server is running!
     📭  Query at ${url}

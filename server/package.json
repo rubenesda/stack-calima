@@ -4,15 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "postinstall": "npm run generate",
     "lint": "eslint .",
     "build": "tsc",
     "dev": "ts-node-dev --respawn ./src/index.ts",
+    "generate": "graphql-codegen",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.2",
+    "@graphql-codegen/typescript": "^4.0.6",
+    "@graphql-codegen/typescript-resolvers": "^4.0.6",
+    "@stylistic/eslint-plugin": "^2.1.0",
     "@typescript-eslint/eslint-plugin": "^7.9.0",
     "@typescript-eslint/parser": "^7.9.0",
     "eslint": "^8.57.0",
@@ -24,6 +30,7 @@
     "@graphql-tools/mock": "^9.0.2",
     "@graphql-tools/schema": "^10.0.3",
     "graphql": "^16.8.1",
-    "graphql-tag": "^2.12.6"
+    "graphql-tag": "^2.12.6",
+    "mongoose": "^8.3.5"
   }
 }
