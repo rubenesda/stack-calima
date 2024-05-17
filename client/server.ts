@@ -16,7 +16,7 @@ import {
 } from '@shopify/remix-oxygen';
 import {AppSession} from '~/lib/session';
 import {CART_QUERY_FRAGMENT} from '~/lib/fragments';
-import {createThirdPartyClient} from '~/lib/thirdPartyClient.server';
+import {createFavoritesClient} from '~/lib/favoritesAPIClient.server';
 
 /**
  * Export a fetch handler in module format.
@@ -78,8 +78,10 @@ export default {
         cartQueryFragment: CART_QUERY_FRAGMENT,
       });
 
-      // Create the Rick and Morty API Client
-      const thirdParty = createThirdPartyClient({
+      /**
+       * Create a client for Favorites API.
+       */
+      const favoritesAPI = createFavoritesClient({
         cache,
         waitUntil,
       });
@@ -98,7 +100,7 @@ export default {
           cart,
           env,
           waitUntil,
-          thirdParty,
+          favoritesAPI,
         }),
       });
 

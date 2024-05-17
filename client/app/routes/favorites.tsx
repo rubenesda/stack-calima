@@ -7,17 +7,21 @@ import {
 } from '@shopify/hydrogen';
 import {ProductsGrid} from '~/components/ProductsGrid';
 import {PRODUCT_ITEM_FRAGMENT} from '~/lib/fragments';
+import {FAVORITES_QUERY} from '~/lib/queries';
 import type {ProductItemFragment} from 'storefrontapi.generated';
 import type {Favorite} from '~/__generated__/graphql';
 
 // Fetch and return API data with a Remix loader function
-export async function loader({context}: any) {
-  const {storefront, thirdParty} = context;
+export async function loader({context}: LoaderFunctionArgs) {
+  const {storefront, favoritesAPI} = context;
 
-  const {favorites} = (await thirdParty.query(FAVORITES_QUERY, {
+  // We pull all the favorites products from the Nodejs microservice
+  const {favorites} = (await favoritesAPI.query(FAVORITES_QUERY, {
     cache: CacheShort(),
   })) as {favorites: Favorite[]};
 
+  // From here, we employs Array.reduce to build the inputs for our GraphQL
+  // mutation which was build through GraphQL Aliases approach
   const ids = favorites.map((el) => el.productId);
 
   const variables = ids.reduce((a, v, i) => {
@@ -27,6 +31,9 @@ export async function loader({context}: any) {
     };
   }, {});
 
+  // we employ GraphQL aliases for executing one single request to pull the
+  // rest of the favorite product data instead of multiple single requests,
+  // it'd mean one request per each favorite product to get the rest of the data
   const result = await storefront.query(PRODUCT_FAVORITES_QUERY(ids), {
     variables: {...variables},
   });
@@ -49,16 +56,6 @@ export default function Favorites() {
     </div>
   );
 }
-
-// Query the API for a list of characters
-const FAVORITES_QUERY = `#graphql:thirdParty
-  query {
-    favorites {
-      id
-      productId
-    }
-  }
-`;
 
 // Query with aliases
 const PRODUCT_FAVORITES_QUERY = (productIds: string[]) => `#graphql

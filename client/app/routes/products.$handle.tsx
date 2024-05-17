@@ -1,7 +1,13 @@
 import {Suspense} from 'react';
-import {defer, redirect, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
+import {
+  defer,
+  redirect,
+  type ActionFunctionArgs,
+  type LoaderFunctionArgs,
+} from '@shopify/remix-oxygen';
 import {
   Await,
+  Form,
   Link,
   useLoaderData,
   type MetaFunction,
@@ -13,6 +19,8 @@ import type {
   ProductVariantFragment,
 } from 'storefrontapi.generated';
 import {
+  CacheShort,
+  CacheNone,
   Image,
   Money,
   VariantSelector,
@@ -25,14 +33,54 @@ import type {
   SelectedOption,
 } from '@shopify/hydrogen/storefront-api-types';
 import {getVariantUrl} from '~/lib/variants';
+import {FAVORITES_QUERY} from '~/lib/queries';
+import type {Favorite} from '~/__generated__/graphql';
 
 export const meta: MetaFunction<typeof loader> = ({data}) => {
   return [{title: `Hydrogen | ${data?.product.title ?? ''}`}];
 };
 
+// It will be invoked to store the product to favorites API or delete one from
+// favorite API.
+export async function action({request, context}: ActionFunctionArgs) {
+  const {favoritesAPI} = context;
+  const formData = await request.formData();
+  const productId = formData.get('id');
+  const intent = formData.get('intent');
+
+  switch (intent) {
+    case 'create':
+      await favoritesAPI.query(CREATE_PRODUCT_FAVORITE_MUTATION, {
+        variables: {
+          createFavoriteInput: {
+            productId,
+          },
+        },
+        cache: CacheShort(),
+      });
+
+      break;
+    case 'delete':
+      const favoriteId = formData.get('favorite-id');
+      await favoritesAPI.query(DELETE_PRODUCT_FAVORITE_MUTATION, {
+        variables: {
+          deleteFavoriteId: favoriteId,
+        },
+        cache: CacheShort(),
+      });
+
+      break;
+
+    default:
+      throw new Error('Unexpected action');
+  }
+
+  return null;
+}
+
 export async function loader({params, request, context}: LoaderFunctionArgs) {
   const {handle} = params;
-  const {storefront} = context;
+  const {favoritesAPI, storefront} = context;
 
   if (!handle) {
     throw new Error('Expected product handle to be defined');
@@ -74,7 +122,12 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
     variables: {handle},
   });
 
-  return defer({product, variants});
+  // we bring all favorite products frmo favorites API
+  const {favorites} = (await favoritesAPI.query(FAVORITES_QUERY, {
+    cache: CacheNone(),
+  })) as {favorites: Favorite[]};
+
+  return defer({product, variants, favorites});
 }
 
 function redirectToFirstVariant({
@@ -101,7 +154,7 @@ function redirectToFirstVariant({
 }
 
 export default function Product() {
-  const {product, variants} = useLoaderData<typeof loader>();
+  const {product, variants, favorites} = useLoaderData<typeof loader>();
   const {selectedVariant} = product;
   return (
     <div className="product">
@@ -110,6 +163,7 @@ export default function Product() {
         selectedVariant={selectedVariant}
         product={product}
         variants={variants}
+        favorites={favorites}
       />
     </div>
   );
@@ -136,12 +190,19 @@ function ProductMain({
   selectedVariant,
   product,
   variants,
+  favorites,
 }: {
   product: ProductFragment;
   selectedVariant: ProductFragment['selectedVariant'];
   variants: Promise<ProductVariantsQuery>;
+  favorites: Favorite[];
 }) {
-  const {title, descriptionHtml} = product;
+  const {title, descriptionHtml, id} = product;
+
+  // If the current product is stored in favorites API database,
+  // we will change the favorite's appareance button.
+  const favorite = favorites.find((el) => el.productId === id);
+
   return (
     <div className="product-main">
       <h1>{title}</h1>
@@ -177,6 +238,29 @@ function ProductMain({
       <br />
       <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
       <br />
+      <Form method="post">
+        <input type="hidden" name="id" value={id} />
+        <input type="hidden" name="favorite-id" value={favorite?.id} />
+        {favorite ? (
+          <button
+            className="favorite favorite-remove"
+            type="submit"
+            name="intent"
+            value="delete"
+          >
+            Remove from Favorites
+          </button>
+        ) : (
+          <button
+            className="favorite"
+            type="submit"
+            name="intent"
+            value="create"
+          >
+            Add to Favorites
+          </button>
+        )}
+      </Form>
     </div>
   );
 }
@@ -413,3 +497,19 @@ const VARIANTS_QUERY = `#graphql
     }
   }
 ` as const;
+
+// Mutation create favorite
+const CREATE_PRODUCT_FAVORITE_MUTATION = `#graphql:favoritesAPI
+  mutation CreateFavorite($createFavoriteInput: createFavoriteInput!) {
+    createFavorite(createFavoriteInput: $createFavoriteInput) {
+      id
+      productId
+    }
+  }
+`;
+
+const DELETE_PRODUCT_FAVORITE_MUTATION = `#graphql:favoritesAPI
+  mutation DeleteFavorite($deleteFavoriteId: ID!) {
+    deleteFavorite(id: $deleteFavoriteId)
+  }
+`;
