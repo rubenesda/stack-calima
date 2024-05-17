@@ -426,6 +426,23 @@ aside li {
   padding: 0.25rem 0.5rem;
 }
 
+.favorite {
+  background-color: deepskyblue;
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+  border: 0px;
+  cursor: pointer;
+}
+
+.favorite:hover {
+  background-image: linear-gradient(rgb(0 0 0/10%) 0 0);
+}
+
+.favorite-remove {
+  background-color: red;
+}
+
 /*
 * --------------------------------------------------
 * routes/blog._index.tsx

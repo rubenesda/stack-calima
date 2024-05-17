@@ -16,6 +16,7 @@ import type {
   CountryCode,
 } from '@shopify/hydrogen/storefront-api-types';
 import type {AppSession} from '~/lib/session';
+import {createFavoritesClient} from './app/lib/favoritesAPIClient.server';
 
 declare global {
   /**
@@ -53,6 +54,7 @@ declare module '@shopify/remix-oxygen' {
     customerAccount: CustomerAccount;
     session: AppSession;
     waitUntil: ExecutionContext['waitUntil'];
+    favoritesAPI: ReturnType<typeof createFavoritesClient>;
   }
 
   /**

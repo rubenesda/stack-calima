@@ -1,11 +1,22 @@
-import {createWithCache, CacheLong} from '@shopify/hydrogen';
+import {createWithCache, CacheLong, type WithCache} from '@shopify/hydrogen';
 
-export function createThirdPartyClient({cache, waitUntil}: any) {
+type AllCacheOptions = Parameters<WithCache>[1];
+
+export function createFavoritesClient({
+  cache,
+  waitUntil,
+}: {
+  cache: Cache;
+  waitUntil: ExecutionContext['waitUntil'];
+}) {
   const withCache = createWithCache({cache, waitUntil});
 
-  async function query(
-    query: any,
-    options = {variables: {}, cache: CacheLong()},
+  async function query<T = any>(
+    query: `#graphql:favoritesAPI${string}`,
+    options: {
+      variables?: object;
+      cache: AllCacheOptions;
+    } = {variables: {}, cache: CacheLong()},
   ) {
     return withCache(
       ['r&m', query, JSON.stringify(options.variables)],
@@ -29,7 +40,7 @@ export function createThirdPartyClient({cache, waitUntil}: any) {
           );
         }
 
-        const json = (await response.json()) as any;
+        const json = await response.json<{data: T; error: string}>();
 
         return json.data;
       },
