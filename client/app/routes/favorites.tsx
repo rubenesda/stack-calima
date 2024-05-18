@@ -2,6 +2,7 @@ import {json, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {useLoaderData} from '@remix-run/react';
 import {
   CacheShort,
+  CacheNone,
   Pagination,
   getPaginationVariables,
 } from '@shopify/hydrogen';
@@ -10,19 +11,32 @@ import {PRODUCT_ITEM_FRAGMENT} from '~/lib/fragments';
 import {FAVORITES_QUERY} from '~/lib/queries';
 import type {ProductItemFragment} from 'storefrontapi.generated';
 import type {Favorite} from '~/__generated__/graphql';
+import {userId} from '~/utils/user-cookie';
+import {readCookie} from '~/utils/cookie';
 
 // Fetch and return API data with a Remix loader function
-export async function loader({context}: LoaderFunctionArgs) {
+export async function loader({request, context}: LoaderFunctionArgs) {
   const {storefront, favoritesAPI} = context;
+
+  // Get all Cookies and read the cookie value called user-id
+  const cookieHeader = request.headers.get('Cookie');
+  const identifier = await readCookie(userId, cookieHeader);
 
   // We pull all the favorites products from the Nodejs microservice
   const {favorites} = (await favoritesAPI.query(FAVORITES_QUERY, {
-    cache: CacheShort(),
+    variables: {
+      user: identifier,
+    },
+    cache: CacheNone(),
   })) as {favorites: Favorite[]};
 
   // From here, we employs Array.reduce to build the inputs for our GraphQL
   // mutation which was build through GraphQL Aliases approach
   const ids = favorites.map((el) => el.productId);
+
+  if (!ids.length) {
+    return json({products: []});
+  }
 
   const variables = ids.reduce((a, v, i) => {
     return {
@@ -52,7 +66,13 @@ export default function Favorites() {
       <p className="collection-description">
         This is a collection of favorites added by the customer
       </p>
-      <ProductsGrid products={products} />
+      {products.length > 0 ? (
+        <ProductsGrid products={products} />
+      ) : (
+        <>
+          <p>Opps! You have no favorites</p>
+        </>
+      )}
     </div>
   );
 }

@@ -5,9 +5,11 @@ type AllCacheOptions = Parameters<WithCache>[1];
 export function createFavoritesClient({
   cache,
   waitUntil,
+  favoriteToken,
 }: {
   cache: Cache;
   waitUntil: ExecutionContext['waitUntil'];
+  favoriteToken: string;
 }) {
   const withCache = createWithCache({cache, waitUntil});
 
@@ -27,6 +29,7 @@ export function createFavoritesClient({
           method: 'POST',
           headers: {
             'Content-type': 'application/json',
+            Authorization: `Bearer ${favoriteToken}`,
           },
           body: JSON.stringify({
             query,

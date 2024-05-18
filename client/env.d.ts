@@ -22,7 +22,9 @@ declare global {
   /**
    * A global `process` object is only available during build to access NODE_ENV.
    */
-  const process: {env: {NODE_ENV: 'production' | 'development'}};
+  const process: {
+    env: {NODE_ENV: 'production' | 'development'; FAVORITES_API_TOKEN: string};
+  };
 
   /**
    * Declare expected Env parameter in fetch handler.
@@ -35,6 +37,7 @@ declare global {
     PUBLIC_STOREFRONT_ID: string;
     PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID: string;
     PUBLIC_CUSTOMER_ACCOUNT_API_URL: string;
+    FAVORITES_API_TOKEN: string;
   }
 
   /**
