@@ -24,6 +24,10 @@ export async function loader({context}: LoaderFunctionArgs) {
   // mutation which was build through GraphQL Aliases approach
   const ids = favorites.map((el) => el.productId);
 
+  if (!ids.length) {
+    return json({products: []});
+  }
+
   const variables = ids.reduce((a, v, i) => {
     return {
       ...a,
@@ -52,7 +56,13 @@ export default function Favorites() {
       <p className="collection-description">
         This is a collection of favorites added by the customer
       </p>
-      <ProductsGrid products={products} />
+      {products.length > 0 ? (
+        <ProductsGrid products={products} />
+      ) : (
+        <>
+          <p>Opps! You have no favorites</p>
+        </>
+      )}
     </div>
   );
 }

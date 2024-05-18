@@ -84,6 +84,7 @@ export default {
       const favoritesAPI = createFavoritesClient({
         cache,
         waitUntil,
+        favoriteToken: env.FAVORITES_API_TOKEN,
       });
 
       /**
