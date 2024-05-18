@@ -5,7 +5,7 @@ import { resolvers } from './resolvers';
 import { dbConnection } from './utils/db';
 import { FavoriteDataSource } from './datasources/favorite-db';
 import 'dotenv/config';
-import { AuthenticationError } from './utils/error';
+import { AuthenticationError, BadUserInputErrorPlugin } from './utils/error';
 
 export async function createApolloServer () {
   await dbConnection();
@@ -13,6 +13,7 @@ export async function createApolloServer () {
   const server = new ApolloServer({
     resolvers,
     typeDefs,
+    plugins: [BadUserInputErrorPlugin],
   });
 
   const { url } = await startStandaloneServer(server, {

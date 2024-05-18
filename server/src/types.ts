@@ -8,6 +8,7 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: 
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -18,6 +19,28 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type CreateFavoriteResponse = {
+  __typename?: 'CreateFavoriteResponse';
+  /** Similar to HTTP status code, represents the status of the mutation */
+  code: Scalars['Int']['output'];
+  /** New create Favorite after a successful mutation */
+  favorite?: Maybe<Favorite>;
+  /** Human-readable message for the UI */
+  message: Scalars['String']['output'];
+  /** Indicates whether the mutation was successful */
+  success: Scalars['Boolean']['output'];
+};
+
+export type DeleteFavoriteResponse = {
+  __typename?: 'DeleteFavoriteResponse';
+  /** Similar to HTTP status code, represents the status of the mutation */
+  code: Scalars['Int']['output'];
+  /** Human-readable message for the UI */
+  message: Scalars['String']['output'];
+  /** Indicates whether the mutation was successful */
+  success: Scalars['Boolean']['output'];
+};
+
 /** Favorite is an element that link a product store item as favorite */
 export type Favorite = {
   __typename?: 'Favorite';
@@ -25,15 +48,15 @@ export type Favorite = {
   /** The Product's ID */
   productId: Scalars['String']['output'];
   /** The User's identifier */
-  user?: Maybe<Scalars['String']['output']>;
+  user: Scalars['String']['output'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
   /** Update a specific favorite product */
-  createFavorite: Favorite;
+  createFavorite: CreateFavoriteResponse;
   /** Delete a specfiic favorite product */
-  deleteFavorite?: Maybe<Scalars['Boolean']['output']>;
+  deleteFavorite: DeleteFavoriteResponse;
 };
 
 
@@ -137,8 +160,11 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  CreateFavoriteResponse: ResolverTypeWrapper<Omit<CreateFavoriteResponse, 'favorite'> & { favorite?: Maybe<ResolversTypes['Favorite']> }>;
+  DeleteFavoriteResponse: ResolverTypeWrapper<DeleteFavoriteResponse>;
   Favorite: ResolverTypeWrapper<IFavoriteModel>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
+  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
@@ -148,24 +174,42 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']['output'];
+  CreateFavoriteResponse: Omit<CreateFavoriteResponse, 'favorite'> & { favorite?: Maybe<ResolversParentTypes['Favorite']> };
+  DeleteFavoriteResponse: DeleteFavoriteResponse;
   Favorite: IFavoriteModel;
   ID: Scalars['ID']['output'];
+  Int: Scalars['Int']['output'];
   Mutation: {};
   Query: {};
   String: Scalars['String']['output'];
   createFavoriteInput: CreateFavoriteInput;
 };
 
+export type CreateFavoriteResponseResolvers<ContextType = DataSourceContext, ParentType extends ResolversParentTypes['CreateFavoriteResponse'] = ResolversParentTypes['CreateFavoriteResponse']> = {
+  code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  favorite?: Resolver<Maybe<ResolversTypes['Favorite']>, ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type DeleteFavoriteResponseResolvers<ContextType = DataSourceContext, ParentType extends ResolversParentTypes['DeleteFavoriteResponse'] = ResolversParentTypes['DeleteFavoriteResponse']> = {
+  code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type FavoriteResolvers<ContextType = DataSourceContext, ParentType extends ResolversParentTypes['Favorite'] = ResolversParentTypes['Favorite']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   productId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type MutationResolvers<ContextType = DataSourceContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  createFavorite?: Resolver<ResolversTypes['Favorite'], ParentType, ContextType, RequireFields<MutationCreateFavoriteArgs, 'createFavoriteInput'>>;
-  deleteFavorite?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationDeleteFavoriteArgs, 'id'>>;
+  createFavorite?: Resolver<ResolversTypes['CreateFavoriteResponse'], ParentType, ContextType, RequireFields<MutationCreateFavoriteArgs, 'createFavoriteInput'>>;
+  deleteFavorite?: Resolver<ResolversTypes['DeleteFavoriteResponse'], ParentType, ContextType, RequireFields<MutationDeleteFavoriteArgs, 'id'>>;
 };
 
 export type QueryResolvers<ContextType = DataSourceContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -173,6 +217,8 @@ export type QueryResolvers<ContextType = DataSourceContext, ParentType extends R
 };
 
 export type Resolvers<ContextType = DataSourceContext> = {
+  CreateFavoriteResponse?: CreateFavoriteResponseResolvers<ContextType>;
+  DeleteFavoriteResponse?: DeleteFavoriteResponseResolvers<ContextType>;
   Favorite?: FavoriteResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
