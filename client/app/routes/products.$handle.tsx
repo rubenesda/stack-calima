@@ -35,6 +35,8 @@ import type {
 import {getVariantUrl} from '~/lib/variants';
 import {FAVORITES_QUERY} from '~/lib/queries';
 import type {Favorite} from '~/__generated__/graphql';
+import {userId} from '~/utils/user-cookie';
+import {readCookie} from '~/utils/cookie';
 
 export const meta: MetaFunction<typeof loader> = ({data}) => {
   return [{title: `Hydrogen | ${data?.product.title ?? ''}`}];
@@ -48,12 +50,16 @@ export async function action({request, context}: ActionFunctionArgs) {
   const productId = formData.get('id');
   const intent = formData.get('intent');
 
+  const cookieHeader = request.headers.get('Cookie');
+  const identifier = await readCookie(userId, cookieHeader);
+
   switch (intent) {
     case 'create':
       await favoritesAPI.query(CREATE_PRODUCT_FAVORITE_MUTATION, {
         variables: {
           createFavoriteInput: {
             productId,
+            user: identifier,
           },
         },
         cache: CacheShort(),
@@ -122,8 +128,14 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
     variables: {handle},
   });
 
+  const cookieHeader = request.headers.get('Cookie');
+  const identifier = await readCookie(userId, cookieHeader);
+
   // we bring all favorite products frmo favorites API
   const {favorites} = (await favoritesAPI.query(FAVORITES_QUERY, {
+    variables: {
+      user: identifier,
+    },
     cache: CacheNone(),
   })) as {favorites: Favorite[]};
 
@@ -504,6 +516,7 @@ const CREATE_PRODUCT_FAVORITE_MUTATION = `#graphql:favoritesAPI
     createFavorite(createFavoriteInput: $createFavoriteInput) {
       id
       productId
+      user
     }
   }
 `;

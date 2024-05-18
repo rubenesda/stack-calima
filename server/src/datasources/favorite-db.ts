@@ -2,8 +2,8 @@ import { Favorite } from '../models';
 import type { IFavoriteModel } from '../models';
 
 export class FavoriteDataSource {
-  async getFavorites() {
-    return await Favorite.find({});
+  async getFavorites(user: string) {
+    return await Favorite.find({ user });
   }
 
   async createFavorite(favoriteItem: IFavoriteModel) {

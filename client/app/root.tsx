@@ -15,6 +15,8 @@ import favicon from './assets/favicon.svg';
 import resetStyles from './styles/reset.css?url';
 import appStyles from './styles/app.css?url';
 import {Layout} from '~/components/Layout';
+import {userId} from '~/utils/user-cookie';
+import {readCookie} from '~/utils/cookie';
 
 /**
  * This is important to avoid re-fetching root queries on sub-navigations
@@ -53,7 +55,7 @@ export function links() {
   ];
 }
 
-export async function loader({context}: LoaderFunctionArgs) {
+export async function loader({request, context}: LoaderFunctionArgs) {
   const {storefront, customerAccount, cart} = context;
   const publicStoreDomain = context.env.PUBLIC_STORE_DOMAIN;
 
@@ -76,6 +78,11 @@ export async function loader({context}: LoaderFunctionArgs) {
     },
   });
 
+  // Get all cookies and read the user-id cookie. If the user-id cookie
+  // does not exist yet, it will assign and set a new value for one
+  const cookieHeader = request.headers.get('Cookie');
+  const identifier = await readCookie(userId, cookieHeader);
+
   return defer(
     {
       cart: cartPromise,
@@ -85,9 +92,10 @@ export async function loader({context}: LoaderFunctionArgs) {
       publicStoreDomain,
     },
     {
-      headers: {
-        'Set-Cookie': await context.session.commit(),
-      },
+      headers: [
+        ['Set-Cookie', await context.session.commit()],
+        ['Set-Cookie', await userId.serialize(identifier)],
+      ],
     },
   );
 }

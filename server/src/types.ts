@@ -24,6 +24,8 @@ export type Favorite = {
   id: Scalars['ID']['output'];
   /** The Product's ID */
   productId: Scalars['String']['output'];
+  /** The User's identifier */
+  user?: Maybe<Scalars['String']['output']>;
 };
 
 export type Mutation = {
@@ -50,10 +52,17 @@ export type Query = {
   favorites: Array<Favorite>;
 };
 
+
+export type QueryFavoritesArgs = {
+  user: Scalars['String']['input'];
+};
+
 /** Favorite's data that will be stored */
 export type CreateFavoriteInput = {
   /** The Product's ID */
   productId: Scalars['String']['input'];
+  /** The User's identifier */
+  user: Scalars['String']['input'];
 };
 
 
@@ -150,6 +159,7 @@ export type ResolversParentTypes = {
 export type FavoriteResolvers<ContextType = DataSourceContext, ParentType extends ResolversParentTypes['Favorite'] = ResolversParentTypes['Favorite']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   productId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -159,7 +169,7 @@ export type MutationResolvers<ContextType = DataSourceContext, ParentType extend
 };
 
 export type QueryResolvers<ContextType = DataSourceContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  favorites?: Resolver<Array<ResolversTypes['Favorite']>, ParentType, ContextType>;
+  favorites?: Resolver<Array<ResolversTypes['Favorite']>, ParentType, ContextType, RequireFields<QueryFavoritesArgs, 'user'>>;
 };
 
 export type Resolvers<ContextType = DataSourceContext> = {

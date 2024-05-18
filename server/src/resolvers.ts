@@ -2,8 +2,8 @@ import type { Resolvers } from './types';
 
 export const resolvers: Resolvers = {
   Query: {
-    favorites: (_, __, { dataSources }) => {
-      return dataSources.favoritesDB.getFavorites();
+    favorites: (_, { user }, { dataSources }) => {
+      return dataSources.favoritesDB.getFavorites(user);
     },
   },
   Mutation: {
