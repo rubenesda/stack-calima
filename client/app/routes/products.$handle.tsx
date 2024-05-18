@@ -514,15 +514,24 @@ const VARIANTS_QUERY = `#graphql
 const CREATE_PRODUCT_FAVORITE_MUTATION = `#graphql:favoritesAPI
   mutation CreateFavorite($createFavoriteInput: createFavoriteInput!) {
     createFavorite(createFavoriteInput: $createFavoriteInput) {
-      id
-      productId
-      user
+      code
+      success
+      message
+      favorite {
+        id
+        productId
+        user
+      }
     }
   }
 `;
 
 const DELETE_PRODUCT_FAVORITE_MUTATION = `#graphql:favoritesAPI
   mutation DeleteFavorite($deleteFavoriteId: ID!) {
-    deleteFavorite(id: $deleteFavoriteId)
+    deleteFavorite(id: $deleteFavoriteId) {
+      code
+      success
+      message
+    }
   }
 `;

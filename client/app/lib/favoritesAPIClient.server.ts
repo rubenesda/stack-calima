@@ -2,6 +2,11 @@ import {createWithCache, CacheLong, type WithCache} from '@shopify/hydrogen';
 
 type AllCacheOptions = Parameters<WithCache>[1];
 
+/**
+ * This creates a client for Favorite API
+ * @param - This is an Obeject that will contains some Remix's elements
+ * @returns - JSON Object with the Body data from Favorite API
+ */
 export function createFavoritesClient({
   cache,
   waitUntil,
