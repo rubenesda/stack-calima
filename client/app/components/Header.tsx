@@ -81,6 +81,7 @@ export function HeaderMenu({
           </NavLink>
         );
       })}
+      <NavLink to={'/favorites'}>Favorites</NavLink>
     </nav>
   );
 }
