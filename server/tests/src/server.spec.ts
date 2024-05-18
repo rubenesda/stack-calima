@@ -1,6 +1,8 @@
-import { createApolloServer } from '.';
-import { dbDisconnect } from './utils/db';
+
+import { createApolloServer } from '../../src';
+import { dbDisconnect } from '../../src/utils/db';
 import request from 'supertest';
+import 'dotenv/config';
 
 // query graphql get all favorites
 const queryData = {
@@ -29,7 +31,8 @@ const mutationCreateFavorite = {
 
 describe('e2e testing', () => {
   let server, url, favorite;
-
+  const graphlUrlPath = '/';
+  const authToken = `Bearer ${process.env.AUTH_TOKEN}`;
   // before the tests we spin up a new Apollo Server
   beforeAll(async () => {
     ({ server, url } = await createApolloServer());
@@ -42,21 +45,21 @@ describe('e2e testing', () => {
   });
 
   it('Get zero favorites', async () => {
-    const response = await request(url).post('/').send(queryData);
-    expect(response.errors).toBeUndefined();
+    const response = await request(url).post(graphlUrlPath).set('authorization', authToken).send(queryData);
+    expect(response.error).toBeFalsy();
     expect(response.body.data?.favorites).toEqual([]);
   });
 
   it('Create one favorite', async () => {
-    const response = await request(url).post('/').send(mutationCreateFavorite);
-    expect(response.errors).toBeUndefined();
+    const response = await request(url).post(graphlUrlPath).set('authorization', authToken).send(mutationCreateFavorite);
+    expect(response.error).toBeFalsy();
     favorite = response.body.data?.createFavorite;
     expect(favorite.productId).toBe('gid://shopify/Product/7982853619734');
   });
 
   it('Get one favorite', async () => {
-    const response = await request(url).post('/').send(queryData);
-    expect(response.errors).toBeUndefined();
+    const response = await request(url).post(graphlUrlPath).set('authorization', authToken).send(queryData);
+    expect(response.error).toBeFalsy();
     expect(response.body.data?.favorites.length).toBe(1);
   });
 
@@ -71,8 +74,8 @@ describe('e2e testing', () => {
       },
     };
 
-    const response = await request(url).post('/').send(mutationDeleteFavorite);
-    expect(response.errors).toBeUndefined();
+    const response = await request(url).post(graphlUrlPath).set('authorization', authToken).send(mutationDeleteFavorite);
+    expect(response.error).toBeFalsy();
     expect(response.body.data?.deleteFavorite).toBe(true);
   });
 });

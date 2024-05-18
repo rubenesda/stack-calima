@@ -3,10 +3,11 @@
     "rootDir": "src",
     "outDir": "dist",
     "target": "esnext",
+    "skipLibCheck": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "module": "commonjs",
   },
-  "include": ["src"],
-  "exclude": ["codegen.ts"]
+  "include": ["src", "tests"],
+  "exclude": ["codegen.ts", "node_modules"]
 }
