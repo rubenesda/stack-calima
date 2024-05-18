@@ -140,7 +140,7 @@ View Hydrogen app: http://localhost:3000/ [1]
 
 ## How to access to Favorites Products List Page
 
-You can access to favorites list page by typing in the address bar `http://localhost:3000/favorites`. Also, the website has a navigation button to go to the Favorites List page directly.
+You can access to favorites list page by typing in the browser address bar `http://localhost:3000/favorites`. Also, you can access directly from the website, there is a navigation button to go to the Favorites List page directly.
 
 ## Technologies employed
 
