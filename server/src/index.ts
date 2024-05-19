@@ -24,7 +24,8 @@ export async function createApolloServer () {
       // Evaluate whether the request came from graphql-codegen
       const codegen = req.headers['dev-codegen'] || '';
 
-      // if the request was from graphql-codege, it will jump the basic authentication
+      // if the request was from graphql-codegen script,
+      // it will jump the basic authentication
       if (!codegen) {
         // Get the source token after "Bearer "
         const source = token.split(' ')[1]; // e.g. "strongtoken123"
