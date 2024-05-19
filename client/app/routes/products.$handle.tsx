@@ -139,7 +139,11 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
     cache: CacheNone(),
   })) as {favorites: Favorite[]};
 
-  return defer({product, variants, favorites});
+  // If the current product is stored in favorites API database,
+  // we will change the favorite's appareance button.
+  const favorite = favorites.find((el) => el.productId === product.id);
+
+  return defer({product, variants, favorite});
 }
 
 function redirectToFirstVariant({
@@ -166,7 +170,7 @@ function redirectToFirstVariant({
 }
 
 export default function Product() {
-  const {product, variants, favorites} = useLoaderData<typeof loader>();
+  const {product, variants, favorite} = useLoaderData<typeof loader>();
   const {selectedVariant} = product;
   return (
     <div className="product">
@@ -175,7 +179,7 @@ export default function Product() {
         selectedVariant={selectedVariant}
         product={product}
         variants={variants}
-        favorites={favorites}
+        favorite={favorite}
       />
     </div>
   );
@@ -202,18 +206,14 @@ function ProductMain({
   selectedVariant,
   product,
   variants,
-  favorites,
+  favorite,
 }: {
   product: ProductFragment;
   selectedVariant: ProductFragment['selectedVariant'];
   variants: Promise<ProductVariantsQuery>;
-  favorites: Favorite[];
+  favorite: Favorite | undefined;
 }) {
   const {title, descriptionHtml, id} = product;
-
-  // If the current product is stored in favorites API database,
-  // we will change the favorite's appareance button.
-  const favorite = favorites.find((el) => el.productId === id);
 
   return (
     <div className="product-main">
