@@ -11,11 +11,21 @@ This guide explains how to initialize this Full Stack application locally with a
 
 ## Environment Variables
 
-You don't need to worry about environment variables. They were set up through `.env` and `.env.test` files in each application (client & server). Therefore, you don't have to add new ones to the services.
+You don't need to worry about environment variables. Both projects employ `dotenv` package. So, they were set up through `.env` and `.env.test` files in each application (client & server). Therefore, you don't have to add new ones to the services.
 
 ## Types
 
 Both applications (client & server) have a stage `postinstall` which will execute after you install the packages. It will generate the types that you need to work with typescript. Nevertheless, some of them were committed.
+
+## Run Mongo service
+
+You must run a MongoDB service on your local machine. Here, it will run it through Docker. You must run the command below
+
+```bash
+docker-compose -f docker-compose-mongo.yml up -d
+```
+
+The filename has a different filename standard because it clarifies that the manifest constains just the Mongo service. Therefore, you must add the flag `-f` to `docker-compose` command to point the filename out.
 
 ## NodeJS microservice - server end
 
@@ -44,14 +54,6 @@ or
 ```bash
 npm install
 ```
-
-Once, the packages are installed, you must run a MongoDB service. Here, it will run through Docker. You must run the command below
-
-```bash
-docker-compose -f docker-compose-mongo.yml up -d
-```
-
-The filename has a different format and that made it different to the standard. Therefore, you must add the flag `-f` to describe the filename.
 
 Finally, you can run the server from any commands shown below
 
@@ -113,57 +115,66 @@ or
 npm run dev
 ```
 
-You look at the next log. This will be a good signal
+You look at the next log. This will be a good signal which declares that client is running in `http://localhost:3000/`
 
 ```bash
 $ shopify hydrogen dev --codegen
 
 Environment variables injected into MiniOxygen:
-
 SESSION_SECRET        from local .env
-
 PUBLIC_STORE_DOMAIN   from local .env
-
 FAVORITES_API_TOKEN   from local .env
-
 ➜  Local:   http://localhost:3000/
-
 ➜  Network: use --host to expose
-
 ➜  press h + enter to show help
 
 success
-
 View Hydrogen app: http://localhost:3000/ [1]
-
 ```
 
 ## How to access to Favorites Products List Page
 
 You can access to favorites list page by typing in the browser address bar `http://localhost:3000/favorites`. Also, you can access directly from the website, there is a navigation button to go to the Favorites List page directly.
 
+## How to run the unit tests
+
+You can run the test from both projects with any of the commands bellow
+
+```bash
+yarn test
+```
+or
+
+```bash
+npm run test
+```
+
 ## Technologies employed
 
 ### GraphQL
 
-It employed `apollo-server` and `graphql` technologies to build the interface of communication between the client and server. It has powerful tools to reduce the latency of the application, cache the requests, and save the number of requests through tools such as aliases or connections. Besides, tools like `graphql-codegen` and `MockSchema` allow you: First, keep up your types based on the schema. Second, provide to frontend application an initial and predictable data which you can start to work quickly.
+It employs Apollo Server and Graphql technologies to build the interface of communication between the client and server. It has whopping powerful tools to reduce the latency of the application, cache of the requests, and save the number of requests through tools such as aliases or connections. Besides, tools like Graphql Codegen and Mock Schemas give you some advatanges. Some of them, for instance, keep up your types based on the schema. Another one, provide to frontend application an initial and predictable data which you can start to work quickly.
 
 ### Express
 
-This employed `express`, it is being covered by the `apollo-server` framework. Under this layer, functions as `startStandaloneServer` use Apollo Server 4's Express integration. Therefore, it will allow you to build and launch an API sooner with low complexity of configuration. Apart from that, if you need to add some processing before or after, you would have to switch to employ `expressMiddleware`. This was not the use case.
+This employs Express through the Apollo Sserver framework. Under this layer, functions as `startStandaloneServer` use Apollo Server 4's Express integration. Therefore, it will allow you to build and launch an API faster with low complexity of configuration. Apart from that, if you need to add some processing before or after, you would have to switch to employ `expressMiddleware`. This was not the use case.
 
 ### Mongoose
 
-It employed MongoDB, which is a NoSQL database for storing the product. Actually, you could use both type of database (SQL and NoSQL). However, we decided due to the simplicity and configuration of the model.
+It employs MongoDB, which is a NoSQL database for storing the product. Actually, you could use both type of database (SQL and NoSQL). However, we decided due to the simplicity and configuration of the model.
 
 ### Linting
 
-It employed `ESLint` to organize the code properly
+It employs ESLint to organize the code properly
 
 ### Jest
 
-It employed `Jest` for testing. This has enough tools to allow you to test your application, you don't need to install too many external packages to test the main methods and functions of your application.
+It employs Jest for testing the backend side. This has enough tools to allow you to test your application, you don't need to install too many external packages to test the main methods and functions of your application.
 
 ### Docker
 
-It employed `docker-compose` and `docker` to deploy a Mongo service. It will avoid installing third-party packages directly on your local machine and set up them. From Docker, you can manage an image that will host your service from a simple manifest file.
+It employs docker-compose and docker to deploy a Mongo service. It will avoid installing third-party packages directly on your local machine and set up them. From Docker, you can manage an image that will host your service from a simple manifest file.
+
+### Vitest
+
+It employs `@testing-library/react`, `@remix-run/testing`, and `vitest` as main tools to create unit test cases in some Remix components. Vitest employs Jest assertions and it can run natively ESM and NodeJS modules without needing transformers. Furthermore, Shopify Hydrogen project works with ESM instead of CommonJS. It causes that some testing frameworks as Jest requests complex configuration files and low probability of success for running the unit tests properly
