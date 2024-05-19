@@ -55,7 +55,7 @@ const DELETE_FAVORITE_MUTATION = `
 describe('e2e testing', () => {
   let server, url, favoriteResponse, favoriteResponse2, favoriteResponse3;
   const graphlUrlPath = '/';
-  const authToken = `Bearer ${process.env.AUTH_TOKEN}`;
+  const authToken = `Bearer ${process.env.SOURCE_TOKEN}`;
   const user01 = 'user01';
   const user02 = 'user02';
   const product01 = 'gid://shopify/Product/7982853619734';

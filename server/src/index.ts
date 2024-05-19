@@ -19,14 +19,20 @@ export async function createApolloServer () {
   const { url } = await startStandaloneServer(server, {
     context: async ({req}) => {
 
-      // Evaluate simple authentication
+      // Get authorization token from the website
       const token = req.headers.authorization || '';
+      // Evaluate whether the request came from graphql-codegen
+      const codegen = req.headers['dev-codegen'] || '';
 
-      // Get the user token after "Bearer "
-      const userId = token.split(' ')[1]; // e.g. "strongtoken123"
+      // if the request was from graphql-codege, it will jump the basic authentication
+      if (!codegen) {
+        // Get the source token after "Bearer "
+        const source = token.split(' ')[1]; // e.g. "strongtoken123"
 
-      if (userId !== process.env.AUTH_TOKEN) {
-        throw AuthenticationError();
+        // Evaluate a simple authentication from the website
+        if (source !== process.env.SOURCE_TOKEN) {
+          throw AuthenticationError();
+        }
       }
 
       return {
