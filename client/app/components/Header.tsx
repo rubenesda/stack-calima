@@ -81,7 +81,17 @@ export function HeaderMenu({
           </NavLink>
         );
       })}
-      <NavLink to={'/favorites'}>Favorites</NavLink>
+      <NavLink
+        className="header-menu-item"
+        end
+        key="favorite01"
+        onClick={closeAside}
+        prefetch="intent"
+        style={activeLinkStyle}
+        to={'/favorites'}
+      >
+        Favorites
+      </NavLink>
     </nav>
   );
 }

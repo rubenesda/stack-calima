@@ -252,7 +252,9 @@ function ProductMain({
       <br />
       <Form method="post">
         <input type="hidden" name="id" value={id} />
-        <input type="hidden" name="favorite-id" value={favorite?.id} />
+        {favorite?.id && (
+          <input type="hidden" name="favorite-id" value={favorite?.id} />
+        )}
         {favorite ? (
           <button
             className="favorite favorite-remove"
