@@ -149,6 +149,18 @@ or
 npm run test
 ```
 
+# How the server knows that favorites can bring?
+
+The client generates automatically a user-ID for each customer's session. On other words, each time the customers open the website from their browsers. Also, the user-ID is being stored as a cookie which will be queried each time that the client needs to send a GraphQL request to the server. Therefore, the user-ID is queried by the client and injected to either GraphQL query or GraphQL mutation as an input.
+
+Once, this information reaches the server, the GraphQL resolver `favorites` can query to the database based on user-ID requested and to bring the favorites products according to that specific user-ID. Then, two users/customers won't be able to see a same list of favorite products.
+
+The user-ID is stored as cookie due to the itself's features. Some of them are:
+- The data isn't quite big to be stored in another place as the LocalStorage.
+- This isn't actually a sensite data because this isn't saving any customer's personal information.
+- Also, for developement purposes, this doesn't have an expiration time. The cookie will keep until the customer decides to clean the cookies of the website.
+- This is useful for demonstrating how two users can see different favorites for development purposes. However, for production purposes this must be orchestrated according to the data pulled from the Login page. Here, it was developed employing a Demo shop or Mock.shop. Therefore, this doesn't have capabilities such as Sign Up,  Log in, and so on.
+
 # Authentication
 
 It has a simple authentication which evaluates that the token injected in the requests through the header `Authorization`  matches with the `SOURCE_TOKEN` variable saved in our environment variables. Here, it is employing a development token.
