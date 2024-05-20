@@ -67,11 +67,11 @@ or
 npm run dev
 ```
 
-You will observe the next log from the terminal. Now, your server will be running by default `http://localhost:4000/`
+You will observe the next log from the terminal. Now, your server will be running by default `http://localhost:4000/api`
 
 ```bash
 🚀  Server is running!
-📭  Query at http://localhost:4000/
+📭  Listening on http://localhost:4000/api
 ```
 
 ## Shopify Hydrogen - client end
@@ -174,7 +174,7 @@ It employs Apollo Server and Graphql technologies to build the interface of comm
 
 ### Express
 
-This employs Express through the Apollo Sserver framework. Under this layer, functions as `startStandaloneServer` use Apollo Server 4's Express integration. Therefore, it will allow you to build and launch an API faster with low complexity of configuration. Apart from that, if you need to add some processing before or after, you would have to switch to employ `expressMiddleware`. This was not the use case.
+This employs Express framework together Apollo Server. This is one of the integrations easier with Apollo Server. Besides, it's the most popular Node.js web framework, and it integrates well with many other popular libraries. On other hand, it's using `expressMiddleware`, it sets a custom GraphQL endpoint `/api`. Also, it is preparing our applicattion to be more scalable because you will be able to add new REST or GraphQL endpoints, more middlewares, so on.
 
 ### Mongoose
 

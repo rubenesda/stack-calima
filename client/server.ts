@@ -85,6 +85,7 @@ export default {
         cache,
         waitUntil,
         favoriteToken: env.FAVORITES_API_TOKEN,
+        favoriteApiUrl: env.FAVORITES_API_URL,
       });
 
       /**

@@ -1,5 +1,5 @@
 
-import { createApolloServer } from '../../src';
+import { createApolloServer } from '../../src/app';
 import { dbDisconnect } from '../../src/utils/db';
 import request, { Response } from 'supertest';
 import 'dotenv/config';
@@ -53,8 +53,8 @@ const DELETE_FAVORITE_MUTATION = `
 ;
 
 describe('e2e testing', () => {
-  let server, url, favoriteResponse, favoriteResponse2, favoriteResponse3;
-  const graphlUrlPath = '/';
+  let graphqlPath, app, favoriteResponse, favoriteResponse2, favoriteResponse3;
+
   const authToken = `Bearer ${process.env.SOURCE_TOKEN}`;
   const user01 = 'user01';
   const user02 = 'user02';
@@ -64,12 +64,11 @@ describe('e2e testing', () => {
 
   // before the tests we spin up a new Apollo Server
   beforeAll(async () => {
-    ({ server, url } = await createApolloServer());
+    ({ app, graphqlPath } = await createApolloServer());
   });
 
   // after the tests we'll stop the server and remove all collections
   afterAll(async () => {
-    await server?.stop();
     dbDisconnect();
   });
 
@@ -81,7 +80,7 @@ describe('e2e testing', () => {
       },
     };
 
-    const response = await request(url).post(graphlUrlPath).set('authorization', authToken)
+    const response = await request(app).post(graphqlPath).set('authorization', authToken)
       .send(queryData);
     expect(response.error).toBeFalsy();
     expect(response.status).toBe(200);
@@ -94,7 +93,7 @@ describe('e2e testing', () => {
       variables: {},
     };
 
-    const response = await request(url).post(graphlUrlPath).set('authorization', authToken)
+    const response = await request(app).post(graphqlPath).set('authorization', authToken)
       .send(queryData);
     expect(response.error).toBeDefined();
     expect(response.status).toBe(400);
@@ -111,7 +110,7 @@ describe('e2e testing', () => {
       },
     };
 
-    const response = await request(url).post(graphlUrlPath).set('authorization', authToken)
+    const response = await request(app).post(graphqlPath).set('authorization', authToken)
       .send(mutationCreateFavorite);
     expect(response.error).toBeFalsy();
     expect(response.status).toBe(200);
@@ -132,7 +131,7 @@ describe('e2e testing', () => {
       },
     };
 
-    const response = await request(url).post(graphlUrlPath).set('authorization', authToken)
+    const response = await request(app).post(graphqlPath).set('authorization', authToken)
       .send(mutationCreateFavorite);
     expect(response.error).toBeDefined();
     expect(response.status).toBe(400);
@@ -150,7 +149,7 @@ describe('e2e testing', () => {
       },
     };
 
-    response = await request(url).post(graphlUrlPath).set('authorization', authToken)
+    response = await request(app).post(graphqlPath).set('authorization', authToken)
       .send(mutationCreateFavorite);
 
     expect(response.error).toBeFalsy();
@@ -162,7 +161,7 @@ describe('e2e testing', () => {
 
     mutationCreateFavorite.variables.createFavoriteInput.productId = product03;
 
-    response = await request(url).post(graphlUrlPath).set('authorization', authToken)
+    response = await request(app).post(graphqlPath).set('authorization', authToken)
       .send(mutationCreateFavorite);
 
     expect(response.error).toBeFalsy();
@@ -181,7 +180,7 @@ describe('e2e testing', () => {
       },
     };
 
-    const response = await request(url).post(graphlUrlPath).set('authorization', authToken)
+    const response = await request(app).post(graphqlPath).set('authorization', authToken)
       .send(queryData);
     expect(response.error).toBeFalsy();
     expect(response.status).toBe(200);
@@ -196,7 +195,7 @@ describe('e2e testing', () => {
       },
     };
 
-    const response = await request(url).post(graphlUrlPath).set('authorization', authToken)
+    const response = await request(app).post(graphqlPath).set('authorization', authToken)
       .send(queryData);
     expect(response.error).toBeFalsy();
     expect(response.status).toBe(200);
@@ -212,7 +211,7 @@ describe('e2e testing', () => {
       },
     };
 
-    const response = await request(url).post(graphlUrlPath).set('authorization', authToken)
+    const response = await request(app).post(graphqlPath).set('authorization', authToken)
       .send(mutationDeleteFavorite);
 
     expect(response.error).toBeFalsy();
@@ -229,7 +228,7 @@ describe('e2e testing', () => {
       },
     };
 
-    const response = await request(url).post(graphlUrlPath).set('authorization', authToken)
+    const response = await request(app).post(graphqlPath).set('authorization', authToken)
       .send(mutationDeleteFavorite);
 
     expect(response.error).toBeFalsy();
@@ -247,7 +246,7 @@ describe('e2e testing', () => {
       },
     };
 
-    response = await request(url).post(graphlUrlPath).set('authorization', authToken)
+    response = await request(app).post(graphqlPath).set('authorization', authToken)
       .send(mutationDeleteFavorite);
 
     expect(response.error).toBeFalsy();
@@ -256,7 +255,7 @@ describe('e2e testing', () => {
 
     mutationDeleteFavorite.variables.deleteFavoriteId = favoriteResponse3.favorite.id,
 
-    response = await request(url).post(graphlUrlPath).set('authorization', authToken)
+    response = await request(app).post(graphqlPath).set('authorization', authToken)
       .send(mutationDeleteFavorite);
 
     expect(response.error).toBeFalsy();
