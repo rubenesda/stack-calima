@@ -151,15 +151,20 @@ npm run test
 
 # How the server knows that favorites can bring?
 
-The client generates automatically a user-ID for each customer's session. On other words, each time the customers open the website from their browsers. Also, the user-ID is being stored as a cookie which will be queried each time that the client needs to send a GraphQL request to the server. Therefore, the user-ID is queried by the client and injected to either GraphQL query or GraphQL mutation as an input.
+The client automatically generates a user-ID for each customer's session, meaning that each time customers open the website from their browsers, a user-ID is created. This user-ID is then stored as a cookie, which is queried each time that the client needs to send a GraphQL request to the server. Consequently, the client queries the user-ID and injects it into either GraphQL query or GraphQL mutation as an input.
 
-Once, this information reaches the server, the GraphQL resolver `favorites` can query to the database based on user-ID requested and to bring the favorites products according to that specific user-ID. Then, two users/customers won't be able to see a same list of favorite products.
+Once, this information reaches the server, the GraphQL resolver `favorites` can query the database based on the requested user-ID and retrieve the favorites products specific to that user-ID. As a result, two users or customers won't see a same list of favorite products.
 
 The user-ID is stored as cookie due to the itself's features. Some of them are:
 - The data isn't quite big to be stored in another place as the LocalStorage.
 - This isn't actually a sensite data because this isn't saving any customer's personal information.
 - Also, for developement purposes, this doesn't have an expiration time. The cookie will keep until the customer decides to clean the cookies of the website.
 - This is useful for demonstrating how two users can see different favorites for development purposes. However, for production purposes this must be orchestrated according to the data pulled from the Login page. Here, it was developed employing a Demo shop or Mock.shop. Therefore, this doesn't have capabilities such as Sign Up,  Log in, and so on.
+
+This development is aware of the limitations and was done for purposes of the test task. Some of them are:
+- You will see different favorites list from two or more different browsers because each browser will simulate a different customer and each browser will store an different used-ID.
+- This isn't linked with the customer's account because this is employing the demo version from Shopify Hydrogen documentation.
+- A process of Signup and Login wasn't request to develop in this test task.
 
 # Authentication
 
