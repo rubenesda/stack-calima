@@ -164,7 +164,7 @@ npm run generate
 
 # Authentication
 
-It has a simple authentication which evaluates that the token injected in the requests through the header `Authorization`  match with the `SOURCE_TOKEN` variable saved in our environment variables. Here, it is employing a development token.
+It has a simple authentication which evaluates that the token injected in the requests through the header `Authorization`  matches with the `SOURCE_TOKEN` variable saved in our environment variables. Here, it is employing a development token.
 
 ## Technologies employed
 
