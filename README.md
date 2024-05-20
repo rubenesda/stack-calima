@@ -19,7 +19,7 @@ Both applications (client & server) have a stage called `postinstall` which will
 
 ## Run Mongo service
 
-You must run a MongoDB service on your local machine. Here, it will run it through Docker. You must run the command below
+You must run a MongoDB service on your local machine. Here, it will run it through Docker. You must run the command below from the root folder
 
 ```bash
 docker-compose -f docker-compose-mongo.yml up -d
@@ -196,7 +196,7 @@ It employs docker-compose and docker to deploy a Mongo service. It will avoid in
 
 It employs `@testing-library/react`, `@remix-run/testing`, and `vitest` as main tools to create unit test cases in some Remix components. Vitest employs Jest assertions and it can run natively ESM and NodeJS modules without needing transformers. Furthermore, Shopify Hydrogen project works with ESM instead of CommonJS. It causes that some testing frameworks as Jest requests complex configuration files and low probability of success for running the unit tests properly
 
-# Video url
+# Short Video
 
 This is an Drive folder where you will watch a short video which explains and shows some topics of the work done.
 
