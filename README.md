@@ -195,3 +195,9 @@ It employs docker-compose and docker to deploy a Mongo service. It will avoid in
 ### Vitest
 
 It employs `@testing-library/react`, `@remix-run/testing`, and `vitest` as main tools to create unit test cases in some Remix components. Vitest employs Jest assertions and it can run natively ESM and NodeJS modules without needing transformers. Furthermore, Shopify Hydrogen project works with ESM instead of CommonJS. It causes that some testing frameworks as Jest requests complex configuration files and low probability of success for running the unit tests properly
+
+# Video url
+
+This is an Drive folder where you will watch a short video which explains and shows some topics of the work done.
+
+https://drive.google.com/drive/folders/1JVdGado8q1steKvPgVfMlwuRwfyvqre8?usp=sharing
