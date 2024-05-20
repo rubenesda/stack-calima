@@ -7,20 +7,22 @@ import { typeDefs } from './schema';
 import { resolvers } from './resolvers';
 import { dbConnection } from './utils/db';
 import { FavoriteDataSource } from './datasources/favorite-db';
-import { AuthenticationError, BadUserInputErrorPlugin } from './utils/error';
+import { AuthenticationError, badUserInputErrorPlugin } from './utils/error';
 
 // Required logic for integrating with Express
 const app = express();
 const graphqlPath = process.env.GRAPHQL_PATH || '/api';
 
 export const createApolloServer = async () => {
+  // Initialize the Database connection
   await dbConnection();
 
+  // ApolloServer initialization
   const server = new ApolloServer({
     resolvers,
     typeDefs,
     plugins: [
-      BadUserInputErrorPlugin,
+      badUserInputErrorPlugin,
     ],
   });
 

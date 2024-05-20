@@ -21,7 +21,7 @@ export const AuthenticationError = () => {
  * This is a GraphQL plugin, it will allow you set a proper status code when Apollo Server detected
  * that the input of any mutation or query does not pass the schema validation
  */
-export const BadUserInputErrorPlugin = {
+export const badUserInputErrorPlugin = {
   async requestDidStart() {
     return {
       async willSendResponse({ response }) {
