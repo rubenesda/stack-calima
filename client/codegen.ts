@@ -1,9 +1,10 @@
 import type {CodegenConfig} from '@graphql-codegen/cli';
+import 'dotenv/config';
 
 const config: CodegenConfig = {
   schema: [
     {
-      'http://localhost:4000': {
+      [`${process.env.FAVORITES_API_URL}`]: {
         headers: {
           'dev-codegen': 'true',
         },

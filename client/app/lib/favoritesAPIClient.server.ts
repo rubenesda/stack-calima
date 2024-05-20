@@ -11,10 +11,12 @@ export function createFavoritesClient({
   cache,
   waitUntil,
   favoriteToken,
+  favoriteApiUrl,
 }: {
   cache: Cache;
   waitUntil: ExecutionContext['waitUntil'];
   favoriteToken: string;
+  favoriteApiUrl: string;
 }) {
   const withCache = createWithCache({cache, waitUntil});
 
@@ -30,7 +32,7 @@ export function createFavoritesClient({
       options.cache,
       async function () {
         // call to the API
-        const response = await fetch('http://localhost:4000', {
+        const response = await fetch(favoriteApiUrl, {
           method: 'POST',
           headers: {
             'Content-type': 'application/json',
